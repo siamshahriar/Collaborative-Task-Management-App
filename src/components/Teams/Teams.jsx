@@ -254,6 +254,12 @@ const Teams = () => {
                         ))}
                       </tbody>
                     </table>
+                    {teamLess.length === 0 && (
+                      <p className="text-center text-2xl font-semibold bg-yellow-300 mt-10 ">
+                        {" "}
+                        No Open Users found{" "}
+                      </p>
+                    )}
                   </div>
                   <div className="modal-action">
                     <form method="dialog">
