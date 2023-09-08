@@ -2,6 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/AuthProviders";
 import {
   leaveTeam,
+  teamInviteAccept,
+  teamInviteAdd,
+  teamInviteReject,
+  teamLessUsers,
   teamsAdd,
   teamsAlldlt,
   teamsGet,
@@ -10,13 +14,35 @@ import {
 const Teams = () => {
   const { user } = useContext(AuthContext);
   const [joinStatus, setJoinStatus] = useState(false);
+  const [joinRequests, setJoinRequests] = useState([]);
   const [makeRender, setMakeRender] = useState(false);
+  const [teamLess, setTeamLess] = useState([]);
 
   useEffect(() => {
-    setJoinStatus(
-      teamsGet().find((each) => each.members.includes(user.username))
-    );
+    const foundTeam = teamsGet();
+    if (foundTeam) {
+      setJoinStatus(
+        foundTeam.find((each) => each.members.includes(user.username))
+      );
+    }
   }, [makeRender]);
+
+  useEffect(() => {
+    setTeamLess(teamLessUsers());
+  }, [makeRender]);
+
+  useEffect(() => {
+    const foundTeam = teamsGet();
+    if (foundTeam) {
+      setJoinRequests(
+        foundTeam.filter((each) => each.invites.includes(user.username))
+      );
+    }
+  }, [makeRender]);
+
+  // console.log(joinRequests);
+
+  // console.log(teamLess);
 
   // console.log(joinStatus);
 
@@ -36,8 +62,9 @@ const Teams = () => {
     let name = e.target.teamName.value;
     let members = [user.username];
     let tasks = [];
+    let invites = [];
 
-    const result = teamsAdd({ id, name, members, tasks });
+    const result = teamsAdd({ id, name, members, tasks, invites });
     if (result) {
       window.alert("team ID exists, try with different Team ID");
     } else {
@@ -46,9 +73,43 @@ const Teams = () => {
       setMakeRender(!makeRender);
     }
   };
+
+  const inviteHandler = (eachData) => {
+    const result = teamInviteAdd({ joinStatus, eachData });
+    // console.log(result);
+    if (result) {
+      window.alert("you already invited the user");
+    } else {
+      window.alert("Invitesion successfull !");
+    }
+  };
+
+  const acceptHandler = (eachData) => {
+    if (joinStatus) {
+      window.alert("Please leave the current team to Accept new Team");
+    } else {
+      const result = teamInviteAccept({ eachData, user });
+      if (result) {
+        window.alert("Accepted");
+        setMakeRender(!makeRender);
+      }
+    }
+  };
+  const rejectHandler = (eachData) => {
+    if (joinStatus) {
+      window.alert("Please leave the current team to Accept new Team");
+    } else {
+      const result = teamInviteReject({ eachData, user });
+      if (result) {
+        window.alert("Rejected");
+        setMakeRender(!makeRender);
+      }
+    }
+  };
   return (
     <div>
       <div className="lg:flex justify-center gap-10 mt-10">
+        {/* Create teams starts  */}
         <div className="card w-96 bg-base-100 shadow-xl image-full">
           <figure>
             <img
@@ -127,6 +188,9 @@ const Teams = () => {
             </div>
           </div>
         </div>
+        {/* Create teams Ended  */}
+
+        {/* Invite teamless starts  */}
         <div className="card w-96 bg-base-100 shadow-xl image-full">
           <figure>
             <img
@@ -139,13 +203,124 @@ const Teams = () => {
               Invite Teamless Users
             </h2>
             <div className="card-actions justify-center mt-5">
-              <button className="btn btn-primary">Invite</button>
+              <button
+                className={joinStatus ? "btn" : " btn btn-disabled"}
+                onClick={() =>
+                  document.getElementById("my_modal_4_invite").showModal()
+                }
+              >
+                Invite
+              </button>
+              <dialog id="my_modal_4_invite" className="modal">
+                <div className="modal-box w-11/12 max-w-5xl text-black">
+                  <div className="overflow-x-auto">
+                    <table className="table">
+                      {/* head */}
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* row 1 */}
+                        {teamLess?.map((each, index) => (
+                          <tr key={index}>
+                            <td>{each.username}</td>
+                            <td>{each.email}</td>
+                            <td
+                              onClick={() => inviteHandler(each)}
+                              className="btn btn-accent"
+                            >
+                              Invite
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="modal-action">
+                    <form method="dialog">
+                      {/* if there is a button, it will close the modal */}
+                      <button className="btn">Close</button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
             </div>
           </div>
         </div>
+        {/* Invite Teamless Ends  */}
+        {/* Join Team Starts */}
+        <div className="card w-96 bg-base-100 shadow-xl image-full">
+          <figure>
+            <img
+              src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+              alt="Shoes"
+            />
+          </figure>
+          <div className="card-body">
+            <h2 className="text-center text-2xl font-bold">
+              Incoming Requests
+            </h2>
+            <div className="card-actions justify-center mt-5">
+              <button
+                className={joinStatus ? " btn btn-disabled" : "btn"}
+                onClick={() =>
+                  document.getElementById("my_modal_4_join").showModal()
+                }
+              >
+                Check
+              </button>
+              <dialog id="my_modal_4_join" className="modal">
+                <div className="modal-box w-11/12 max-w-5xl text-black">
+                  <div className="overflow-x-auto">
+                    <table className="table">
+                      {/* head */}
+                      <thead>
+                        <tr>
+                          <th>Team Name</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* row 1 */}
+                        {joinRequests?.map((each, index) => (
+                          <tr key={index}>
+                            <td>{each.name}</td>
+                            <td
+                              onClick={() => acceptHandler(each)}
+                              className="btn btn-secondary mr-2"
+                            >
+                              Accept
+                            </td>
+                            <td
+                              onClick={() => rejectHandler(each)}
+                              className="btn btn-error"
+                            >
+                              Reject
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="modal-action">
+                    <form method="dialog">
+                      {/* if there is a button, it will close the modal */}
+                      <button className="btn">Close</button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+            </div>
+          </div>
+        </div>
+        {/* Join Team Ends */}
       </div>
 
-      {joinStatus && (
+      {joinStatus ? (
         <div className="card w-96 bg-base-100 shadow-xl mx-auto mt-10">
           <div className="card-body text-center">
             <h2 className="text-2xl font-bold">You are on Team</h2>
@@ -158,6 +333,14 @@ const Teams = () => {
                 Leave
               </button>
             </div>
+          </div>
+        </div>
+      ) : (
+        <div className="card w-96 bg-base-200 shadow-xl mx-auto mt-10">
+          <div className="card-body text-center">
+            <h2 className="text-2xl font-bold">
+              Create a Team or Join a Team To Invite People
+            </h2>
           </div>
         </div>
       )}
