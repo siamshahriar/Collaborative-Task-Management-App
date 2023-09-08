@@ -52,12 +52,15 @@ const Tasks = () => {
 
     const result = tasksAssign({ task, joinStatus });
     if (result) {
-      window.alert(
-        "same Task ID or Title exists, try creating with different ID and Title"
-      );
+      const notify = () =>
+        toast.error(
+          "same Task ID or Title exists, try creating with different ID and Title"
+        );
+      notify();
     } else {
       setMakeRender(!makeRender);
-      window.alert("assigned success");
+      const notify = () => toast.success("assigned success");
+      notify();
     }
   };
 
@@ -76,6 +79,8 @@ const Tasks = () => {
   const HandleTaskDeleted = (eachTask) => {
     const result = tasksDeleteMaker({ eachTask, joinStatus });
     setMakeRender(!makeRender);
+    const notify = () => toast.success("Removed the Task");
+    notify();
   };
 
   // Sorting starts
@@ -92,6 +97,9 @@ const Tasks = () => {
     sortedObj.tasks.sort((a, b) => b.priority.localeCompare(a.priority));
 
     setJoinStatus(sortedObj);
+
+    const notify = () => toast.success("Sorted by Priority");
+    notify();
   };
 
   const sortByDueDate = () => {
@@ -103,6 +111,9 @@ const Tasks = () => {
     });
 
     setJoinStatus(sortedObj);
+
+    const notify = () => toast.success("Sorted By Due Date");
+    notify();
   };
   const sortByPending = () => {
     const sortedObj = { ...joinStatus };
@@ -113,6 +124,8 @@ const Tasks = () => {
     });
 
     setJoinStatus(sortedObj);
+    const notify = () => toast.success("Sorted By Pending");
+    notify();
   };
   const sortByInProgress = () => {
     const sortedObj = { ...joinStatus };
@@ -123,6 +136,9 @@ const Tasks = () => {
     });
 
     setJoinStatus(sortedObj);
+
+    const notify = () => toast.success("Sorted By InProgress");
+    notify();
   };
   const sortByCompleted = () => {
     const sortedObj = { ...joinStatus };
@@ -133,6 +149,9 @@ const Tasks = () => {
     });
 
     setJoinStatus(sortedObj);
+
+    const notify = () => toast.success("Sroted by Completed");
+    notify();
   };
   // Sorting ends
 
@@ -140,7 +159,7 @@ const Tasks = () => {
     <div>
       <div className="lg:flex justify-center gap-10 mt-10">
         {/* Team Tasks Lists Starts  */}
-        <div className="card w-96 bg-base-100 shadow-xl">
+        <div className="card w-96 bg-base-200 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Team Tasks</h2>
             <p>"All team Tasks and Assigned Tasks are Here"</p>
@@ -279,7 +298,7 @@ const Tasks = () => {
           </div>
         </div>
         {/* Team Tasks Lists Ends  */}
-        <div className="card w-96 bg-base-100 shadow-xl">
+        <div className="card w-96 bg-base-200 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Assign Tasks</h2>
             <p>

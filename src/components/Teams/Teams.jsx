@@ -10,6 +10,7 @@ import {
   teamsAlldlt,
   teamsGet,
 } from "../../addToDB/addToDB";
+import { toast } from "react-hot-toast";
 
 const Teams = () => {
   const { user } = useContext(AuthContext);
@@ -66,10 +67,14 @@ const Teams = () => {
 
     const result = teamsAdd({ id, name, members, tasks, invites });
     if (result) {
-      window.alert("team ID exists, try with different Team ID");
+      const notify = () =>
+        toast.error("team ID exists, try with different Team ID");
+      notify();
     } else {
       e.target.reset();
-      window.alert(" team created and joined successfully");
+      const notify = () =>
+        toast.success(" team created and joined successfully");
+      notify();
       setMakeRender(!makeRender);
     }
   };
@@ -78,34 +83,44 @@ const Teams = () => {
     const result = teamInviteAdd({ joinStatus, eachData });
     // console.log(result);
     if (result) {
-      window.alert("you already invited the user");
+      const notify = () => toast.error("you already invited the user");
+      notify();
     } else {
-      window.alert("Invitesion successfull !");
+      const notify = () => toast.success("Invitesion successfull !");
+      notify();
     }
   };
 
   const acceptHandler = (eachData) => {
     if (joinStatus) {
-      window.alert("Please leave the current team to Accept new Team");
+      const notify = () =>
+        toast.error("Please leave the current team to Accept new Team");
+      notify();
     } else {
       const result = teamInviteAccept({ eachData, user });
       if (result) {
-        window.alert("Accepted");
+        const notify = () => toast.success("Accepted");
+        notify();
         setMakeRender(!makeRender);
       }
     }
   };
   const rejectHandler = (eachData) => {
     if (joinStatus) {
-      window.alert("Please leave the current team to Accept new Team");
+      const notify = () =>
+        toast.error("Please leave the current team to Reject any Request");
+      notify();
     } else {
       const result = teamInviteReject({ eachData, user });
       if (result) {
-        window.alert("Rejected");
+        const notify = () => toast.success("Rejected");
+        notify();
         setMakeRender(!makeRender);
       }
     }
   };
+
+  console.log(joinRequests);
   return (
     <div>
       <div className="lg:flex justify-center gap-10 mt-10">
@@ -305,7 +320,14 @@ const Teams = () => {
                         ))}
                       </tbody>
                     </table>
+                    {joinRequests.length === 0 && (
+                      <p className="text-center text-2xl font-semibold bg-yellow-300 mt-10 ">
+                        {" "}
+                        No Join Requests{" "}
+                      </p>
+                    )}
                   </div>
+
                   <div className="modal-action">
                     <form method="dialog">
                       {/* if there is a button, it will close the modal */}

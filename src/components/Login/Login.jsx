@@ -24,8 +24,9 @@ const Login = () => {
       setLogChange(Math.random());
       navigate("/");
     } else {
-      
-      window.alert("email password not found or doesn't match");
+      const notify = () =>
+        toast.error("email password not found or doesn't match");
+      notify();
     }
   };
 

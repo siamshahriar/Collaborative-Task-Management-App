@@ -2,12 +2,15 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../providers/AuthProviders";
 import { logOutUser } from "../../../addToDB/addToDB";
+import { toast } from "react-hot-toast";
 const Navbar = () => {
   const { user, setLogChange } = useContext(AuthContext);
   // console.log(user);
   const handleLogOut = () => {
     logOutUser();
     setLogChange(Math.random());
+    const notify = () => toast.success("logout successfull");
+    notify();
   };
 
   return (

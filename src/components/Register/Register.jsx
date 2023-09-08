@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProviders";
 import { Link, useNavigate } from "react-router-dom";
 import { addUsersToDB } from "../../addToDB/addToDB";
+import { toast } from "react-hot-toast";
 
 const Register = () => {
   const { user, createUser, updateUser } = useContext(AuthContext);
@@ -22,9 +23,12 @@ const Register = () => {
     const result = addUsersToDB({ username, email, password, imgURL, bio });
     console.log(result);
     if (result) {
-      window.alert("User exists, try with different email and username");
+      const notify = () =>
+        toast.error("User exists, try with different email and username");
+      notify();
     } else {
-      window.alert("register success");
+      const notify = () => toast.success("register success");
+      notify();
       form.reset();
       navigate("/login");
     }
