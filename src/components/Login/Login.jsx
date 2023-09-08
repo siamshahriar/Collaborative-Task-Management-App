@@ -3,6 +3,7 @@ import { AuthContext } from "../../providers/AuthProviders";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa6";
 import { loginUser } from "../../addToDB/addToDB";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const { setLogChange } = useContext(AuthContext);
@@ -18,10 +19,12 @@ const Login = () => {
 
     const result = loginUser({ email, password });
     if (result) {
-      window.alert("login successfull");
+      const notify = () => toast.success("login successfull");
+      notify();
       setLogChange(Math.random());
       navigate("/");
     } else {
+      
       window.alert("email password not found or doesn't match");
     }
   };

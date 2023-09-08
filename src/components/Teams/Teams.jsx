@@ -324,6 +324,9 @@ const Teams = () => {
         <div className="card w-96 bg-base-100 shadow-xl mx-auto mt-10">
           <div className="card-body text-center">
             <h2 className="text-2xl font-bold">You are on Team</h2>
+            <p className="font-semibold text-xl text-red-500">
+              Create Team and Incoming Request Buttons are disabled
+            </p>
             <p>Leave this Team to Create or Join</p>
             <div className="card-actions justify-center mt-4">
               <button
@@ -339,6 +342,9 @@ const Teams = () => {
         <div className="card w-96 bg-base-200 shadow-xl mx-auto mt-10">
           <div className="card-body text-center">
             <h2 className="text-2xl font-bold">
+              Invite Teamless Users Button is Disabled
+              <br />
+              <br />
               Create a Team or Join a Team To Invite People
             </h2>
           </div>
